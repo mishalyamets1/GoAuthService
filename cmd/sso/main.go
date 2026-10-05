@@ -18,12 +18,11 @@ const (
 func main() {
 	cfg := config.MustLoad()
 
-	//fmt.Println(cfg)
 	log := setupLogger(cfg.Env)
 
-	log.Info("starting application", slog.Any("config", cfg))
+	log.Info("starting application")
 
-	application := app.New(log, cfg.GRPC.Port, cfg.StoragePath, cfg.TokenTTL)
+	application := app.New(log, cfg.GRPC.Port, cfg.Postgres, cfg.TokenTTL)
 
 	go application.GRPCSrv.MustRun()
 
@@ -34,7 +33,7 @@ func main() {
 
 	log.Info("stopping application", slog.String("signal", sign.String()))
 
-	application.GRPCSrv.Stop()
+	application.Stop()
 
 	log.Info("application stopped")
 
